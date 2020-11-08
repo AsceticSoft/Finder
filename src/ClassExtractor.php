@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder;
+namespace AsceticSoft\Finder;
 
-use Borodulin\Finder\Exception\ParseException;
+use AsceticSoft\Finder\Exception\ParseException;
 
 class ClassExtractor
 {
@@ -17,19 +17,19 @@ class ClassExtractor
 
     public function __invoke($filename): ?string
     {
-        $tokens = \PhpToken::getAll(file_get_contents($filename));
+        $tokens = token_get_all(file_get_contents($filename));
 
         $namespace = '';
 
         $token = current($tokens);
         while (false !== $token) {
-            if ($this->skipAbstract && $token->is(T_ABSTRACT)) {
+            if ($this->skipAbstract && $this->isToken($token, T_ABSTRACT)) {
                 return null;
             }
-            if ($token->is(T_NAMESPACE)) {
+            if ($this->isToken($token, T_NAMESPACE)) {
                 $namespace = $this->extractNamespace($tokens);
             }
-            if ($token->is(T_CLASS)) {
+            if ($this->isToken($token, T_CLASS)) {
                 $className = $this->extractClassName($tokens);
 
                 return $namespace ? "$namespace\\$className" : $className;
@@ -40,11 +40,16 @@ class ClassExtractor
         return null;
     }
 
+    private function isToken($token, int $tokenType): bool
+    {
+        return \is_array($token) && $token[0] === $tokenType;
+    }
+
     private function nextToken(array &$tokens, int $tokenType): string
     {
         $token = next($tokens);
-        if ($token->is($tokenType)) {
-            return $token->text;
+        if (($token[0] ?? null) === $tokenType) {
+            return $token[1];
         }
         throw new ParseException('Parse error. Expected '.token_name($tokenType));
     }
@@ -53,14 +58,18 @@ class ClassExtractor
     {
         $token = next($tokens);
 
-        return $token->is($tokenType);
+        return $this->isToken($token, $tokenType);
     }
 
     private function extractNamespace(array &$tokens): string
     {
         $this->nextToken($tokens, T_WHITESPACE);
+        $namespace = $this->nextToken($tokens, T_STRING);
+        while ($this->isNextToken($tokens, T_NS_SEPARATOR)) {
+            $namespace .= '\\'.$this->nextToken($tokens, T_STRING);
+        }
 
-        return $this->nextToken($tokens, T_NAME_QUALIFIED);
+        return $namespace;
     }
 
     private function extractClassName(array &$tokens): string

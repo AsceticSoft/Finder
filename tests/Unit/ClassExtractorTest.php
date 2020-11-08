@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder\Tests\Unit;
+namespace AsceticSoft\Finder\Tests\Unit;
 
-use Borodulin\Finder\ClassExtractor;
-use Borodulin\Finder\Exception\ParseException;
-use Borodulin\Finder\Tests\Samples\Bar;
-use Borodulin\Finder\Tests\Samples\Foo;
+use AsceticSoft\Finder\ClassExtractor;
+use AsceticSoft\Finder\Exception\ParseException;
+use AsceticSoft\Finder\Tests\Samples\Bar;
+use AsceticSoft\Finder\Tests\Samples\Foo;
 use PHPUnit\Framework\TestCase;
 
 class ClassExtractorTest extends TestCase
@@ -17,7 +17,7 @@ class ClassExtractorTest extends TestCase
         $extractor = new ClassExtractor();
 
         $this->assertEquals(Foo::class, $extractor->__invoke(__DIR__.'/../Samples/Foo.php'));
-//        $this->assertEquals(Bar::class, $extractor->__invoke(__DIR__.'/../Samples/Bar.php'));
+        $this->assertEquals(Bar::class, $extractor->__invoke(__DIR__.'/../Samples/Bar.php'));
         $this->assertNull($extractor->__invoke(__DIR__.'/../Samples/AbstractClass.php'));
         $this->assertNull($extractor->__invoke(__DIR__.'/../Samples/html.php'));
     }

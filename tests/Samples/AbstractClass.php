@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder\Tests\Samples;
+namespace AsceticSoft\Finder\Tests\Samples;
 
 abstract class AbstractClass
 {

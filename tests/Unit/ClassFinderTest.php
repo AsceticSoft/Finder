@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder\Tests\Unit;
+namespace AsceticSoft\Finder\Tests\Unit;
 
-use Borodulin\Finder\ClassFinder;
+use AsceticSoft\Finder\ClassFinder;
 use PHPUnit\Framework\TestCase;
 
 class ClassFinderTest extends TestCase

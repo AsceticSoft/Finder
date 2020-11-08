@@ -2,25 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder;
+namespace AsceticSoft\Finder;
 
-use Borodulin\Finder\Exception\ParseException;
+use AsceticSoft\Finder\Exception\ParseException;
 
 class ClassFinder implements FinderInterface
 {
+    private FinderInterface $fileFinder;
     /**
-     * @var FinderInterface
-     */
-    private $fileFinder;
-    /**
-     * @var callable|null
+     * @var callable
      */
     private $classExtractor;
 
     public function __construct(FinderInterface $fileFinder = null, callable $classExtractor = null)
     {
-        $this->fileFinder = $fileFinder ?: new FileFinder();
-        $this->classExtractor = $classExtractor ?: new ClassExtractor();
+        $this->fileFinder = $fileFinder ?? new FileFinder();
+        $this->classExtractor = $classExtractor ?? new ClassExtractor();
     }
 
     public function addPath(string $path): FinderInterface

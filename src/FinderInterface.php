@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder;
+namespace AsceticSoft\Finder;
 
 interface FinderInterface extends \IteratorAggregate
 {

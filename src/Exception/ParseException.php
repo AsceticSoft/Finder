@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder\Exception;
+namespace AsceticSoft\Finder\Exception;
 
 class ParseException extends \RuntimeException implements ExceptionInterface
 {

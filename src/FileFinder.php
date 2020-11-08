@@ -2,19 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Borodulin\Finder;
+namespace AsceticSoft\Finder;
 
 class FileFinder implements FinderInterface
 {
     /**
      * @var string[]
      */
-    private $paths;
+    private array $paths;
 
-    /**
-     * @var int
-     */
-    private $flags = \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::CURRENT_AS_FILEINFO;
+    private int $flags = \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::CURRENT_AS_FILEINFO;
 
     public function __construct(array $paths = [])
     {
