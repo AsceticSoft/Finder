@@ -51,25 +51,14 @@ class ClassExtractor
         if (($token[0] ?? null) === $tokenType) {
             return $token[1];
         }
-        throw new ParseException('Parse error. Expected '.token_name($tokenType));
-    }
-
-    private function isNextToken(array &$tokens, int $tokenType): bool
-    {
-        $token = next($tokens);
-
-        return $this->isToken($token, $tokenType);
+        throw new ParseException('Parse error. Expected ' . token_name($tokenType));
     }
 
     private function extractNamespace(array &$tokens): string
     {
         $this->nextToken($tokens, T_WHITESPACE);
-        $namespace = $this->nextToken($tokens, T_STRING);
-        while ($this->isNextToken($tokens, T_NS_SEPARATOR)) {
-            $namespace .= '\\'.$this->nextToken($tokens, T_STRING);
-        }
 
-        return $namespace;
+        return $this->nextToken($tokens, T_NAME_QUALIFIED);
     }
 
     private function extractClassName(array &$tokens): string

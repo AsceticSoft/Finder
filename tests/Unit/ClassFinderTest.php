@@ -12,7 +12,7 @@ class ClassFinderTest extends TestCase
     public function testClassFinder(): void
     {
         $classFinder = new ClassFinder();
-        $classFinder->addPath(__DIR__.'/../Samples');
+        $classFinder->addPath(__DIR__ . '/../Samples');
 
         $this->assertEquals(2, iterator_count($classFinder));
     }
