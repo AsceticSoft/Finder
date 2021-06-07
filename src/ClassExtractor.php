@@ -9,14 +9,7 @@ use AsceticSoft\Finder\Exception\ParseException;
 
 class ClassExtractor implements ClassExtractorInterface
 {
-    private bool $skipAbstract;
-
-    public function __construct(bool $skipAbstract = true)
-    {
-        $this->skipAbstract = $skipAbstract;
-    }
-
-    public function findClassName(string $filename): ?string
+    public function findClassName(string $filename, bool $skipAbstract = true): ?string
     {
         $fileContent = file_get_contents($filename);
         if (false === $fileContent) {
@@ -29,7 +22,7 @@ class ClassExtractor implements ClassExtractorInterface
 
         $token = current($tokens);
         while (false !== $token) {
-            if ($this->skipAbstract && $token->is(T_ABSTRACT)) {
+            if ($skipAbstract && $token->is(T_ABSTRACT)) {
                 return null;
             }
             if ($token->is(T_NAMESPACE)) {
