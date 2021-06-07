@@ -13,18 +13,24 @@ class FileFinder implements FinderInterface
 
     private int $flags = \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::CURRENT_AS_FILEINFO;
 
+    /**
+     * @param string[] $paths
+     */
     public function __construct(array $paths = [])
     {
         $this->paths = $paths;
     }
 
-    public function addPath(string $path): FinderInterface
+    public function addPath(string $path): static
     {
         $this->paths[] = $path;
 
         return $this;
     }
 
+    /**
+     * @return \Traversable<int, string>
+     */
     public function getIterator(): \Traversable
     {
         foreach ($this->paths as $path) {

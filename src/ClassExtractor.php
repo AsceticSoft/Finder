@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace AsceticSoft\Finder;
 
+use AsceticSoft\Finder\Exception\FileReadException;
 use AsceticSoft\Finder\Exception\ParseException;
 
-class ClassExtractor
+class ClassExtractor implements ClassExtractorInterface
 {
     private bool $skipAbstract;
 
@@ -15,24 +16,26 @@ class ClassExtractor
         $this->skipAbstract = $skipAbstract;
     }
 
-    public function __invoke($filename): ?string
+    public function findClassName(string $filename): ?string
     {
-        $tokens = token_get_all(file_get_contents($filename));
+        $fileContent = file_get_contents($filename);
+        if (false === $fileContent) {
+            throw new FileReadException($filename);
+        }
+
+        $tokens = \PhpToken::tokenize($fileContent);
 
         $namespace = '';
 
         $token = current($tokens);
         while (false !== $token) {
-            if ($this->skipAbstract && $this->isToken($token, T_ABSTRACT)) {
+            if ($this->skipAbstract && $token->is(T_ABSTRACT)) {
                 return null;
             }
-            if ($this->isToken($token, T_NAMESPACE)) {
+            if ($token->is(T_NAMESPACE)) {
                 $namespace = $this->extractNamespace($tokens);
-            }
-            if ($this->isToken($token, T_CLASS)) {
-                $className = $this->extractClassName($tokens);
-
-                return $namespace ? "$namespace\\$className" : $className;
+            } elseif ($token->is(T_CLASS)) {
+                return ($namespace ? "$namespace\\" : '') . $this->extractClassName($tokens);
             }
             $token = next($tokens);
         }
@@ -40,20 +43,21 @@ class ClassExtractor
         return null;
     }
 
-    private function isToken($token, int $tokenType): bool
-    {
-        return \is_array($token) && $token[0] === $tokenType;
-    }
-
+    /**
+     * @param \PhpToken[] $tokens
+     */
     private function nextToken(array &$tokens, int $tokenType): string
     {
         $token = next($tokens);
-        if (($token[0] ?? null) === $tokenType) {
-            return $token[1];
+        if ($token->is($tokenType)) {
+            return $token->text;
         }
         throw new ParseException('Parse error. Expected ' . token_name($tokenType));
     }
 
+    /**
+     * @param \PhpToken[] $tokens
+     */
     private function extractNamespace(array &$tokens): string
     {
         $this->nextToken($tokens, T_WHITESPACE);
@@ -61,6 +65,9 @@ class ClassExtractor
         return $this->nextToken($tokens, T_NAME_QUALIFIED);
     }
 
+    /**
+     * @param \PhpToken[] $tokens
+     */
     private function extractClassName(array &$tokens): string
     {
         $this->nextToken($tokens, T_WHITESPACE);

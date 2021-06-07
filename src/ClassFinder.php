@@ -9,30 +9,32 @@ use AsceticSoft\Finder\Exception\ParseException;
 class ClassFinder implements FinderInterface
 {
     private FinderInterface $fileFinder;
-    /**
-     * @var callable
-     */
-    private $classExtractor;
+    private ClassExtractorInterface $classExtractor;
 
-    public function __construct(FinderInterface $fileFinder = null, callable $classExtractor = null)
-    {
+    public function __construct(
+        ?FinderInterface $fileFinder = null,
+        ?ClassExtractorInterface $classExtractor = null
+    ) {
         $this->fileFinder = $fileFinder ?? new FileFinder();
         $this->classExtractor = $classExtractor ?? new ClassExtractor();
     }
 
-    public function addPath(string $path): FinderInterface
+    public function addPath(string $path): static
     {
         $this->fileFinder->addPath($path);
 
         return $this;
     }
 
+    /**
+     * @return \Traversable<int, string>
+     */
     public function getIterator(): \Traversable
     {
         foreach ($this->fileFinder as $fileName) {
             if ('.php' === substr($fileName, -4)) {
                 try {
-                    $class = \call_user_func($this->classExtractor, $fileName);
+                    $class = $this->classExtractor->findClassName($fileName);
                     if ($class) {
                         yield $class;
                     }
