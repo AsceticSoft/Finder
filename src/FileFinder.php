@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AsceticSoft\Finder;
 
-class FileFinder implements FinderInterface
+class FileFinder implements FileFinderInterface
 {
     /**
      * @var string[]

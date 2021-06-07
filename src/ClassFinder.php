@@ -6,13 +6,13 @@ namespace AsceticSoft\Finder;
 
 use AsceticSoft\Finder\Exception\ParseException;
 
-class ClassFinder implements FinderInterface
+class ClassFinder implements ClassFinderInterface
 {
-    private FinderInterface $fileFinder;
+    private FileFinderInterface $fileFinder;
     private ClassExtractorInterface $classExtractor;
 
     public function __construct(
-        ?FinderInterface $fileFinder = null,
+        ?FileFinderInterface $fileFinder = null,
         ?ClassExtractorInterface $classExtractor = null
     ) {
         $this->fileFinder = $fileFinder ?? new FileFinder();
